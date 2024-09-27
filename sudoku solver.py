@@ -47,3 +47,51 @@ def find_empty(bo):
             
     #if none are empty then puzzle solved
     return None
+
+def valid_sudoku(bo, number, position):
+    """Checks number is valid by standard sudoku rules
+    (unique to row, column, and box)
+    number is int in cell at given position tuple (row, column)"""
+
+    #check each column in row
+    for i in range(len(bo[0])): #0 is arbitrary since all rows have same length
+       
+        #check if number at position is equal to another in row
+        #position is inputed tuple, position[0] is current row
+        #pos[1] is current column, which shouldn't be checked as number will obvs be equal to itself
+        if bo[position[0]][i] == number and position[1] != i:
+            return False
+    
+    #check each row in column, same method as above
+    for i in range(len(bo)):
+        if bo[i][position[1]] == number and position[0] != i:
+            return False
+    
+    #check box
+    #identify which box by dividing position by 3
+    #which box column
+    box_x = position[1] // 3
+    #which row
+    box_y = position[0] // 3
+
+    #check all cells in box
+    #to get to correct index range multiple above values by 3
+    #and add 3 because for loops don't check last value
+    #iterate through the relevant rows
+    for i in range(box_y*3, box_y*3 + 3):
+        #iterate through the relevant columns within those rows
+        for j in range(box_x*3, box_x*3 + 3):
+            #check if number at position is equal
+            if bo[i][j] == number and (i, j) != position:
+                return False
+    
+    #if tests passed, it's valid, so return True
+    return True
+
+
+
+print_board(board)
+
+
+
+            
