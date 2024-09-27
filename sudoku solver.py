@@ -34,4 +34,16 @@ def print_board(bo):
             else:
                 print(str(bo[i][j])) #unless it's last number in row, then no space, yes new line
 
-print_board(board)
+def find_empty(bo):
+    """finds the first empty square from left to right, top to bottom"""
+
+    #iterate through rows
+    for i in range(len(bo)):
+        #iterate through each column in row
+        for j in range(len(bo[0])):
+            #return cell if it's empty
+            if bo[i][j] == 0:
+                return (i, j)
+            
+    #if none are empty then puzzle solved
+    return None
