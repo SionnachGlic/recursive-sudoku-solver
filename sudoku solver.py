@@ -43,7 +43,7 @@ def find_empty(bo):
         for j in range(len(bo[0])):
             #return cell if it's empty
             if bo[i][j] == 0:
-                return (i, j)
+                return (i, j) #row, col
             
     #if none are empty then puzzle solved
     return None
@@ -88,10 +88,36 @@ def valid_sudoku(bo, number, position):
     #if tests passed, it's valid, so return True
     return True
 
+def solve(bo):
+    """solves sudoku using recursion"""
+
+    find = find_empty(bo)
+
+    if not find: #find_empty returns none if no empties found
+        return True #so solution is found
+    
+    #actual solving algorithm
+    else:
+        #this define row and col variables to (i,j) from find_empty func
+        row, col = find
+    
+    for i in range(1,10): #goes thru 1-9
+        if valid_sudoku(bo, i, (row, col)): #i = number, (row, col) = position
+            #input number if valid
+            bo[row][col] = i
+        
+            if solve(bo): #calls solve again with new added value each time
+                return True
+        
+            else:
+                 bo[row][col] = 0
+    
+    return False #if no valid options, reset last element & backtrack
 
 
 print_board(board)
-
-
+solve(board)
+print('________________________________')
+print_board(board)
 
             
