@@ -114,6 +114,15 @@ def solve(bo):
     
     return False #if no valid options, reset last element & backtrack
 
+#create wrapper for gui (this is just for convenience/clarity when importing & functionally the same as solve(bo))
+def solve_sudoku(bo):
+    """Wrapper for solving sudoku board"""
+    if solve(bo):
+        return bo #returns the solved board
+    else:
+        return None #if it's unsolvable
+
+
 
 print_board(board)
 solve(board)
