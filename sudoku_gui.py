@@ -8,27 +8,31 @@ def create_grid():
     
     entries=[] #2D that'll hold 9x9 Entry widgets
 
-    #Make outer loop to create frames for each 3x3 box
-    for box_row in range(3):
-        for box_col in range(3):
-            #make frame
-            frame = tk.Frame(root, highlightbackground="black", highlightthickness=3)
-            frame.grid(row=box_row*3, column=box_col*3, rowspan=3, columnspan=3)
+    #make 9 rows
+    for row in range(9):
+        row_entries = [] #to hold current row of entries
 
-            for row in range(3): #loops through each row
+        #make 9 columns
+        for col in range(9):
 
-                #empty list that'll be the current row being made before its added to entries
-                row_entries = [] 
+            #make frame for each cell
+            frame = tk.Frame(root, highlightbackground="black", highlightthickness=1)
+            frame.grid(row=row, column=col, sticky="nsew")
 
-                for col in range(3): #loops through each column
+            #make thicker border for 3x3 grid sections (not working yet)
+            if row % 3 == 0:
+                frame.grid(row=row, column=col, sticky="nsew", pady=(2,0))
+            if col % 3 == 3:
+                frame.grid(row=row, column=col, sticky="nsew", padx=(2,0))
+            
+            #greate Entry widget within each frame
+            entry = tk.Entry(frame, width=3, justify='center', font=('Arial', 18))
+            entry.pack(padx=5, pady=5)
 
-                    #creates Entry widget (input field) 3 wide, with centred text in 18pt Arial
-                    entry = tk.Entry(frame, width=3, justify='center', font=('Arial', 18))
-                    #place input field on GUI grid
-                    entry.grid(row=row, column=col, padx=5, pady=5)
-                    row_entries.append(entry) #adds current entry to current row
-                
-                entries.append(row_entries) #Adds completed row to entries 2D list
+            row_entries.append(entry) #add entry to current row
+
+        entries.append(row_entries) #add current row to entries
+
 
     return entries #returns 9x9 grid of input fields
 
@@ -43,31 +47,52 @@ def get_board(entries):
         for entry in row_entries: #loops over each entry of current row
 
             value = entry.get() #gets current value in Entry widget
-            value = int(value) #convert to integer
             #if value is 1-9, save it as is, if not, save it as 0 (empty square)
-            board_row.append(value if value.isdigit() else 0)
+            board_row.append(int(value) if value.isdigit() else 0)
         
         board.append(board_row) #add row to board
     
     return board
 
-#update_grid(board, entries)
 
-#solve_sudoku_gui(entries):
-    #board = get_board(entries)
-    #solved_board = solve_sudoku(board)
-    #if solved_board:
-        #update_grid(solved_board, entries)
-    #else:
+def update_grid(board, entries):
+    """Visually updates input grid with generated solution"""
+    #iterate over each row
+    for row in range(9):
+        #within each row, iterate over each column (cell)
+        for col in range(9):
+            #delete current value
+            entries[row][col].delete(0, tk.END)
+            #insert value from solved board
+            entries[row][col].insert(0, str(board[row][col]))
+
+
+def solve_sudoku_gui(entries):
+    board = get_board(entries)
+    solved_board = solve_sudoku(board)
+
+    #if sudoku solved, update it
+    if solved_board:
+        update_grid(solved_board, entries)
+    else:
         #show error message
+        tk.messagebox.showerror("No solution found!") #not working for some reason
+ 
 
 root = tk.Tk() #make window
 root.title("Sudoku Solver")
 
 entries = create_grid()
+
 #make instructional label here
-#make solve button here
-#maybe make solved/error messages here too
+
+#solve button
+solve_button = tk.Button(root, text="Solve", command=lambda: solve_sudoku_gui(entries))
+solve_button.grid(row=10, column=0, columnspan=9)
+
+ 
+
+#maybe make some different solved/error messages here too when there's better error handling
 
 
 root.mainloop() #run event checker
